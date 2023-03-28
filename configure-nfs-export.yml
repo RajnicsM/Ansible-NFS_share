@@ -1,0 +1,22 @@
+---
+- name: Configure NFS export
+  hosts: nfs_servers
+  become: true
+  vars:
+    nfs_share_path: /data/comp/
+    nfs_export_options: "(rw,sync,no_root_squash)"
+    nfs_export_hosts: "10.0.2.0/24"
+  tasks:
+    - name: Add NFS export to /etc/exports
+      lineinfile:
+        path: /etc/exports
+        state: present
+        line: "{{nfs_share_path}} {{nfs_export_hosts}}{{nfs_export_options}}"
+      notify: restart NFS server
+
+  handlers:
+    - name: restart NFS server
+      service:
+        name: nfs-server
+        state: restarted
+        enabled: true

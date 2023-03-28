@@ -1,0 +1,31 @@
+---
+- name: NFS mount to fstab
+  hosts: target_host
+
+  vars:
+    nfs_share: /data/comp/      
+    mount_point: /data/         
+    nfs_server: nfs_server_hostname 
+
+  tasks:
+    - name: Create mount point directory
+      become: true
+      file:
+        path: "{{ mount_point }}"
+        state: directory
+        mode: 0755
+
+    - name: Mount NFS share
+      become: true
+      mount:
+        path: "{{ mount_point }}"
+        src: "{{ nfs_server }}:{{ nfs_share }}"
+        fstype: nfs
+        opts: defaults
+        state: mounted
+
+    - name: Add mount entry to /etc/fstab
+      become: true
+      lineinfile:
+        path: /etc/fstab
+        line: "{{ nfs_server }}:{{ nfs_share }} {{ mount_point }} nfs defaults 0 0"

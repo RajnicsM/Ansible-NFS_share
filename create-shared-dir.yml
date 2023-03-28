@@ -1,0 +1,12 @@
+---
+- name: Create shared directory
+  hosts: nfs_servers
+  become: true
+  vars:
+    nfs_share_path: /data/comp/
+  tasks:
+    - name: Create shared directory
+      file:
+        path: "{{ nfs_share_path }}"
+        state: directory
+        mode: "0777"
