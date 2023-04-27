@@ -1,0 +1,7 @@
+---
+
+- hosts: nfs_servers
+  become: true
+  roles:
+    - NFS_server_install_role
+
